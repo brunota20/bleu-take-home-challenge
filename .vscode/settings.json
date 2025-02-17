@@ -6,5 +6,8 @@
     "quickfix.biome": "explicit"
   },
   "solidity.packageDefaultDependenciesContractsDirectory": "apps/contracts/src",
-  "solidity.packageDefaultDependenciesDirectory": "apps/contracts/lib"
+  "solidity.packageDefaultDependenciesDirectory": "apps/contracts/lib",
+  "[json]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  }
 }

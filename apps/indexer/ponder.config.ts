@@ -1,25 +1,22 @@
-import { createConfig } from 'ponder';
+import { createConfig, mergeAbis } from 'ponder';
 import { http } from 'viem';
-
-import { ExampleContractAbi } from './abis/ExampleContractAbi';
+import { BleuNFTAbi } from './abis/BleuNFTAbi';
+import { ERC721Abi } from './abis/ERC721Abi';
+import { OwnableAbi } from './abis/OwnableAbi';
 
 export default createConfig({
   networks: {
-    anvil_localhost_testnet: {
-      chainId: 31337,
-      // This is Anvil's default RPC URL. Make sure you're running it.
-      transport: http('http://localhost:8545'),
+    sepolia: {
+      chainId: 11155111,
+      transport: http(process.env.ETH_RPC_URL),
+      disableCache: true,
     },
   },
   contracts: {
-    ExampleContract: {
-      network: 'anvil_localhost_testnet',
-      // TODO: Replace with the actual abi of the contract
-      // Note: You'll probably want to use a mergeAbis function to merge the abi with the erc721 abi
-      abi: ExampleContractAbi,
-      // TODO: Replace with the actual address of the contract
-      address: '0x0000000000000000000000000000000000000000',
-      startBlock: 1,
+    BleuNFT: {
+      network: 'sepolia',
+      abi: mergeAbis([ERC721Abi, OwnableAbi, BleuNFTAbi]),
+      address: '0xEe763b54Fb7b8De7871113Ac4654BE4AEA4681df',
     },
   },
 });

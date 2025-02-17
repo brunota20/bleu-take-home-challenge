@@ -6,9 +6,7 @@
       "contractName": "BleuNFT",
       "contractAddress": "0xee763b54fb7b8de7871113ac4654be4aea4681df",
       "function": null,
-      "arguments": [
-        "0xc621c5A6c8f2ee120C11F1bD016029AdBdDf54Cf"
-      ],
+      "arguments": ["0xc621c5A6c8f2ee120C11F1bD016029AdBdDf54Cf"],
       "transaction": {
         "from": "0xc621c5a6c8f2ee120c11f1bd016029adbddf54cf",
         "gas": "0x2c16ee",
@@ -26,10 +24,7 @@
       "contractName": "BleuNFT",
       "contractAddress": "0xee763b54fb7b8de7871113ac4654be4aea4681df",
       "function": "mint(address,uint256)",
-      "arguments": [
-        "0xc621c5A6c8f2ee120C11F1bD016029AdBdDf54Cf",
-        "1"
-      ],
+      "arguments": ["0xc621c5A6c8f2ee120C11F1bD016029AdBdDf54Cf", "1"],
       "transaction": {
         "from": "0xc621c5a6c8f2ee120c11f1bd016029adbddf54cf",
         "to": "0xee763b54fb7b8de7871113ac4654be4aea4681df",
