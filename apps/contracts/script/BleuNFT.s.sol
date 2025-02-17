@@ -12,7 +12,8 @@ contract BleuNFTScript is Script {
     function run() public {
         vm.startBroadcast();
 
-        nft = new BleuNFT();
+        address deployer = msg.sender;
+        nft = new BleuNFT(deployer);
         nft.mint(msg.sender, 1);
 
         vm.stopBroadcast();
