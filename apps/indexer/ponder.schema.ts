@@ -1,9 +1,11 @@
-import { onchainTable, index } from "ponder";
+import { onchainTable, index, onchainEnum } from "ponder";
+
+export const eventType = onchainEnum("eventType", ["staked", "unstaked"]);
 
 export const transferEvents = onchainTable(
   "transferEvents",
   (t) => ({
-    id: t.text().primaryKey(),  // Change from uuid() to text()
+    id: t.text().primaryKey(),
     from: t.text().notNull(),
     to: t.text().notNull(),
     tokenId: t.bigint().notNull(),
@@ -22,7 +24,7 @@ export const stakingEvents = onchainTable(
     id: t.text().primaryKey(),
     owner: t.text().notNull(),
     tokenId: t.bigint().notNull(),
-    eventType: t.text().notNull(), // "staked" or "unstaked"
+    eventType: eventType().notNull(),
     timestamp: t.bigint().notNull(), // Track event timestamp
   }),
   (table) => ({
