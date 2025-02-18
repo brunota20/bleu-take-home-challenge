@@ -17,8 +17,9 @@ const Header = () => {
         <h1 className="text-primary font-bold text-lg font-roboto-mono text-center">Bleu</h1>
       </Link>
       <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 flex gap-4 text-lg">
-        <NavLink href="/">Home</NavLink>
-        <NavLink href="/theme-showcase">Theme Showcase</NavLink>
+        <NavLink href="/">Mint & Stake</NavLink>
+        <NavLink href="/nfts-showcase">Your NFTs</NavLink>
+        <NavLink href="/transfer-events-showcase">Events</NavLink>
       </div>
       <div className="flex items-center gap-2">
         <ConnectWalletButton />

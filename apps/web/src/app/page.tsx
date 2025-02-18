@@ -1,10 +1,10 @@
-import { placeholder } from "@bleu-builders/tech-challenge-ui";
+import MintStakeControls from "@/components/mint-stake-controls";
 
 export default function Home() {
+
   return (
     <div>
-      <h1>Hello World</h1>
-      <p>{placeholder ? "true" : "false"}</p>
+      <MintStakeControls/>
     </div>
   );
 }
