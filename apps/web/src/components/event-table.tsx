@@ -9,7 +9,6 @@ interface Event {
 }
 
 interface EventTableProps {
-  title: string;
   events: Event[];
 }
 
@@ -19,13 +18,15 @@ const truncateAddress = (address?: string) =>
 const formatTimestamp = (timestamp: string) =>
   new Date(Number(timestamp) * 1000).toLocaleString();
 
-export default function EventTable({ title, events }: EventTableProps) {
+export default function EventTable({ events }: EventTableProps) {
+
   return (
     <div className="w-full overflow-x-auto">
-      <h2 className="text-2xl text-center font-bold text-gray-800 mb-4">{title}</h2>
-      <table className="w-full border border-gray-300 shadow-lg rounded-lg overflow-hidden">
-        <thead className="bg-gray-100">
-          <tr className="text-left text-gray-700">
+      <table
+        className="w-full border shadow-lg rounded-lg overflow-hidden transition-all bg-[rgb(var(--content))] border-[rgb(var(--sub-text))]"
+      >
+        <thead className="bg-[rgb(var(--background))] text-[rgb(var(--foreground))]">
+          <tr className="text-left">
             {events.some((e) => e.from) && <th className="px-4 py-3">From</th>}
             {events.some((e) => e.to) && <th className="px-4 py-3">To</th>}
             <th className="px-4 py-3">Token ID</th>
@@ -36,14 +37,28 @@ export default function EventTable({ title, events }: EventTableProps) {
           {events.map((event, index) => (
             <tr
               key={event.id}
-              className={`border-t border-gray-200 ${
-                index % 2 === 0 ? 'bg-gray-50' : 'bg-white'
-              } hover:bg-gray-100 transition`}
+              className={`border-t transition ${
+                index % 2 === 0
+                  ? 'bg-[rgb(var(--content))]'
+                  : 'bg-[rgb(var(--background))]'
+              } border-[rgb(var(--sub-text))]`}
             >
-              {event.from && <td className="px-4 py-3 text-blue-500 font-mono">{truncateAddress(event.from)}</td>}
-              {event.to && <td className="px-4 py-3 text-green-500 font-mono">{truncateAddress(event.to)}</td>}
-              <td className="px-4 py-3 font-semibold">{event.tokenId}</td>
-              <td className="px-4 py-3 text-gray-600">{formatTimestamp(event.timestamp)}</td>
+              {event.from && (
+                <td className="px-4 py-3 font-mono text-[rgb(var(--primary))]">
+                  {truncateAddress(event.from)}
+                </td>
+              )}
+              {event.to && (
+                <td className="px-4 py-3 font-mono text-[rgb(var(--success))]">
+                  {truncateAddress(event.to)}
+                </td>
+              )}
+              <td className="px-4 py-3 font-semibold text-[rgb(var(--content-foreground))]">
+                {event.tokenId}
+              </td>
+              <td className="px-4 py-3 text-[rgb(var(--sub-text))]">
+                {formatTimestamp(event.timestamp)}
+              </td>
             </tr>
           ))}
         </tbody>

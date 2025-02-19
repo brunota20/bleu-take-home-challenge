@@ -1,8 +1,8 @@
-// components/MintEvents.tsx
 'use client';
 
 import { gql, useQuery } from '@apollo/client';
 import EventTable from './event-table';
+import EventTableSkeleton from './skeleton/events-table-skeleton';
 
 const GET_MINT_EVENTS = gql`
   query GetMintEvents {
@@ -20,8 +20,19 @@ const GET_MINT_EVENTS = gql`
 export default function MintEvents() {
   const { data, loading, error } = useQuery(GET_MINT_EVENTS);
 
-  if (loading) return <p>Loading Mint Events...</p>;
-  if (error) return <p className="text-red-500">Error: {error.message}</p>;
+  if (loading) return <EventTableSkeleton title="Loading Mint Events..." />;
+  if (error) return <p className="text-error">Error: {error.message}</p>;
 
-  return <EventTable title="Mint Events" events={data?.transferEventss?.items || []} />;
+  const events = data?.transferEventss?.items || [];
+
+  return (
+    <div className='flex-col mt-4'>
+      <h2 className="text-2xl text-center font-bold text-foreground mb-4">Mint Events</h2>
+      {events.length === 0 ? (
+        <p className="text-center text-sub-text">No mint events recorded yet. 🏗️</p>
+      ) : (
+        <EventTable events={events} />
+      )}
+    </div>
+  );
 }

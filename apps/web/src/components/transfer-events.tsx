@@ -3,6 +3,7 @@
 
 import { gql, useQuery } from '@apollo/client';
 import EventTable from './event-table';
+import EventTableSkeleton from './skeleton/events-table-skeleton';
 
 const GET_TRANSFER_EVENTS = gql`
   query GetTransferEvents {
@@ -21,8 +22,19 @@ const GET_TRANSFER_EVENTS = gql`
 export default function TransferEvents() {
   const { data, loading, error } = useQuery(GET_TRANSFER_EVENTS);
 
-  if (loading) return <p>Loading Transfer Events...</p>;
-  if (error) return <p className="text-red-500">Error: {error.message}</p>;
+  if (loading) return <EventTableSkeleton title='Loading Transfer Events...'/>;
+  if (error) return <p className="text-error">Error: {error.message}</p>;
 
-  return <EventTable title="Transfer Events" events={data?.transferEventss?.items || []} />;
+  const events = data?.transferEventss?.items || [];
+
+  return (
+    <div className='flex-col mt-4'>
+      <h2 className="text-2xl text-center font-bold text-foreground mb-4">Transfer Events</h2>
+      {events.length === 0 ? (
+        <p className="text-center text-sub-text">No transfer events recorded yet. 🚀</p>
+      ) : (
+        <EventTable events={events} />
+      )}
+    </div>
+  );
 }

@@ -6,9 +6,10 @@ import type React from 'react';
 interface NavLinkProps {
   href: string;
   children: React.ReactNode;
+  onClick?: () => void;
 }
 
-export default function NavLink({ href, children }: NavLinkProps) {
+export default function NavLink({ href, children, onClick }: NavLinkProps) {
   const pathname = usePathname();
 
   const isActive = pathname === href;
@@ -17,6 +18,7 @@ export default function NavLink({ href, children }: NavLinkProps) {
     <Link
       href={href}
       className={cn('text-content-foreground hover:text-primary/80', isActive && 'text-primary ')}
+      onClick={onClick}
     >
       {children}
     </Link>

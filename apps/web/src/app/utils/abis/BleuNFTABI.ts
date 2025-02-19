@@ -11,6 +11,17 @@ export const abi = [
   },
   {
     type: "function",
+    name: "transferFrom",
+    stateMutability: "nonpayable",
+    inputs: [
+      { name: "from", type: "address" },
+      { name: "to", type: "address" },
+      { name: "tokenId", type: "uint256" }
+    ],
+    outputs: []
+  },
+  {
+    type: "function",
     name: "stake",
     stateMutability: "nonpayable",
     inputs: [

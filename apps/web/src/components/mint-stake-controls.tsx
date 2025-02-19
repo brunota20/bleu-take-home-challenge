@@ -6,16 +6,21 @@ import { Button } from '@/components/ui/button';
 import { abi } from '@/app/utils/abis/BleuNFTABI';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react'; // Add useRef
 import { Loader2, Copy } from 'lucide-react';
+import TransactionHash from './transaction-hash';
 
-const CONTRACT_ADDRESS = "0xEe763b54Fb7b8De7871113Ac4654BE4AEA4681df";
+const contractAdress = process.env.NEXT_PUBLIC_CONTRACT_ADDRESS;
 
 export default function MintStakeControls() {
   const { writeContractAsync } = useWriteContract();
   const { address } = useAccount();
   const [txHash, setTxHash] = useState<`0x${string}` | undefined>(undefined);
   const [isLoading, setIsLoading] = useState(false);
+
+  const mintFormRef = useRef<HTMLFormElement>(null);
+  const stakeFormRef = useRef<HTMLFormElement>(null);
+  const unstakeFormRef = useRef<HTMLFormElement>(null);
 
   const { data: receipt, isLoading: isWaiting } = useWaitForTransactionReceipt({
     hash: txHash || undefined,
@@ -25,11 +30,21 @@ export default function MintStakeControls() {
     if (receipt) {
       toast.success(`Transaction confirmed! ✅`);
       setIsLoading(false);
+
+      if (mintFormRef.current) mintFormRef.current.reset();
+      if (stakeFormRef.current) stakeFormRef.current.reset();
+      if (unstakeFormRef.current) unstakeFormRef.current.reset();
     }
   }, [receipt]);
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>, functionName: "mint" | "stake" | "unstake") {
     e.preventDefault();
+
+    if (!address) {
+      toast.error("Wallet not connected! Please connect your wallet.");
+      return;
+    }
+
     const formData = new FormData(e.target as HTMLFormElement);
     const tokenId = formData.get("tokenId") as string;
 
@@ -38,8 +53,8 @@ export default function MintStakeControls() {
       return;
     }
 
-    if (!address) {
-      toast.error("Wallet not connected! Please connect your wallet.");
+    if (!contractAdress || !contractAdress.startsWith("0x")) {
+      toast.error("Contract address is invalid.");
       return;
     }
 
@@ -48,63 +63,63 @@ export default function MintStakeControls() {
       toast.info(`Processing ${functionName} transaction...`);
 
       const hash = await writeContractAsync({
-        address: CONTRACT_ADDRESS,
+        address: contractAdress as `0x${string}`,
         abi,
         functionName,
-        args: functionName === "mint" ? [address, BigInt(tokenId)] : [BigInt(tokenId)],
+        args: functionName === "mint" ? [address as `0x${string}`, BigInt(tokenId)] : [BigInt(tokenId)],
       });
 
       setTxHash(hash);
       toast.success(`Transaction submitted! ✅`);
     } catch (error: any) {
-      console.error("Transaction error:", error);
+      const errorMessage = error.message?.toLowerCase();
+
+      if (error.code === 4001 || errorMessage?.includes("user denied transaction signature") || errorMessage?.includes("user rejected the request")) {
+        toast.warning("Transaction was canceled by the user. ❌");
+      } else if (errorMessage?.includes("insufficient funds")) {
+        toast.error("Insufficient funds to complete the transaction.");
+      } else if (errorMessage?.includes("reverted") || errorMessage?.includes("execution reverted")) {
+        toast.error("Transaction failed. It might have been rejected by the contract.");
+      } else {
+        toast.error(`Error: ${error.message || "Something went wrong."}`);
+      }
+    } finally {
       setIsLoading(false);
-      toast.error(`Error: ${error.message || "Something went wrong."}`);
     }
   }
 
   return (
-    <div className="max-w-md mx-auto bg-white shadow-lg rounded-xl p-6 space-y-6">
-      <h2 className="text-2xl font-bold text-gray-800 text-center">NFT Mint & Stake</h2>
+    <div className="min-h-screen foreground">
+      <div className="max-w-md mx-auto bg-content shadow-lg rounded-xl p-8 space-y-8">
+        <h2 className="text-2xl font-bold text-foreground text-center">NFT Mint & Stake</h2>
 
-      {["mint", "stake", "unstake"].map((action) => (
-        <form key={action} onSubmit={(e) => handleSubmit(e, action as "mint" | "stake" | "unstake")}>
-          <div className="relative">
-            <input
-              name="tokenId"
-              placeholder="Enter Token ID"
-              required
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
-            />
-          </div>
-          <Button
-            disabled={isLoading || isWaiting}
-            type="submit"
-            className="w-full mt-2 flex items-center justify-center gap-2 cursor-pointer"
+        {["mint", "stake", "unstake"].map((action) => (
+          <form
+            key={action}
+            ref={action === "mint" ? mintFormRef : action === "stake" ? stakeFormRef : unstakeFormRef} // Assign refs
+            onSubmit={(e) => handleSubmit(e, action as "mint" | "stake" | "unstake")}
           >
-            {isLoading || isWaiting ? <Loader2 className="animate-spin w-5 h-5" /> : null}
-            {isLoading || isWaiting ? "Processing..." : `${action.charAt(0).toUpperCase() + action.slice(1)} NFT`}
-          </Button>
-        </form>
-      ))}
-
-      {txHash && (
-        <div className="text-center text-sm text-gray-600 mt-4 p-2 bg-gray-100 rounded-lg">
-            <span className="font-semibold block">Transaction Hash:</span>
-            <div className="flex items-center justify-center gap-2">
-            <span className="truncate max-w-[200px] md:max-w-[300px]">{`${txHash.slice(0, 6)}...${txHash.slice(-4)}`}</span>
-            <button
-                className="text-blue-500 hover:text-blue-700 transition"
-                onClick={() => {
-                navigator.clipboard.writeText(txHash);
-                toast.success("Transaction hash copied to clipboard!");
-                }}
-            >
-                <Copy className="w-5 h-5 cursor-pointer" />
-            </button>
+            <div className="relative">
+              <input
+                name="tokenId"
+                placeholder="Enter Token ID"
+                required
+                className="w-full px-4 py-2 border border-sub-text rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent transition"
+              />
             </div>
-        </div>
-      )}
+            <Button
+              disabled={!address || isLoading || isWaiting}
+              type="submit"
+              className="w-full mt-2 flex items-center justify-center gap-2"
+            >
+              {isLoading || isWaiting ? <Loader2 className="animate-spin w-5 h-5" /> : null}
+              {isLoading || isWaiting ? "Processing..." : `${action.charAt(0).toUpperCase() + action.slice(1)} NFT`}
+            </Button>
+          </form>
+        ))}
+
+        {txHash && <TransactionHash txHash={txHash} />}
+      </div>
     </div>
   );
 }

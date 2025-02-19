@@ -2,6 +2,10 @@
 
 import { useAccount } from 'wagmi';
 import { gql, useQuery } from '@apollo/client';
+import LoadingSkeleton from './skeleton/loading-nfts';
+import NFTCard from './NFTCard';
+import { Wallet } from 'lucide-react';
+import { useState } from 'react';
 
 interface NFT {
   owner: string;
@@ -23,47 +27,71 @@ const GET_NFTS = gql`
 
 export default function NFTList() {
   const { address } = useAccount();
-  const { data, loading, error } = useQuery(GET_NFTS, {
+  const { data, loading, error, refetch } = useQuery(GET_NFTS, {
     variables: { owner: address },
     fetchPolicy: 'network-only',
   });
 
-  if (loading)
+  const [searchTerm, setSearchTerm] = useState('');
+  const [filterStaked, setFilterStaked] = useState<'all' | 'staked' | 'unstaked'>('all');
+
+  if (!address) {
     return (
-      <div>
-        <h2 className="text-2xl text-center font-bold text-gray-800 mb-4">Your NFTs</h2>
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 animate-pulse">
-            {[...Array(6)].map((_, index) => (
-            <div key={index} className="bg-gray-200 h-40 rounded-lg"></div>
-            ))}
-        </div>
+      <div className="flex flex-col items-center justify-center min-h-[50vh] text-center">
+        <Wallet className="w-12 h-12 text-sub-text mb-4" />
+        <h3 className="text-xl font-semibold text-sub-text mb-4">
+          Please connect your wallet to see your NFTs
+        </h3>
       </div>
     );
+  }
 
-  if (error) return <p className="text-red-500">Error: {error.message}</p>;
+  if (loading) return <LoadingSkeleton />;
+  if (error) return <p className="text-error">Error: {error.message}</p>;
+
+  const nfts = data?.nftss?.items || [];
+
+  const filteredNFTs = nfts.filter((nft: NFT) => {
+    const matchesSearchTerm = nft.tokenId.includes(searchTerm);
+    const matchesStakedStatus =
+      filterStaked === 'all' ||
+      (filterStaked === 'staked' && nft.staked) ||
+      (filterStaked === 'unstaked' && !nft.staked);
+    return matchesSearchTerm && matchesStakedStatus;
+  });
 
   return (
-    <div>
-      <h2 className="text-2xl text-center font-bold text-gray-800 mb-4">Your NFTs</h2>
-      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-        {data?.nftss?.items.map((nft: NFT) => (
-          <div
-            key={nft.tokenId}
-            className="bg-white shadow-lg rounded-xl p-4 flex flex-col items-center border border-gray-200 hover:shadow-2xl transition"
-          >
-            <div className="bg-gray-100 w-full h-40 flex items-center justify-center rounded-lg">
-              <span className="text-gray-400 text-lg">NFT #{nft.tokenId}</span>
-            </div>
-            <p className="mt-2 text-gray-700 font-semibold">
-              {nft.staked ? (
-                <span className="text-green-600">Staked ✅</span>
-              ) : (
-                <span className="text-red-500">Unstaked ❌</span>
-              )}
-            </p>
-          </div>
-        ))}
+    <div className='flex-col mt-4'>
+      <h2 className="text-2xl text-center font-bold text-foreground mb-4">Your NFTs</h2>
+
+      <div className="flex flex-col md:flex-row gap-4 mb-6">
+        <input
+          type="text"
+          placeholder="Search by Token ID"
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+          className="p-2 border rounded-lg bg-[rgb(var(--content))] text-[rgb(var(--content-foreground))] border-[rgb(var(--sub-text))]"
+        />
+        <select
+          value={filterStaked}
+          onChange={(e) => setFilterStaked(e.target.value as 'all' | 'staked' | 'unstaked')}
+          className="p-2 border rounded-lg bg-[rgb(var(--content))] text-[rgb(var(--content-foreground))] border-[rgb(var(--sub-text))]"
+        >
+          <option value="all">All</option>
+          <option value="staked">Staked</option>
+          <option value="unstaked">Unstaked</option>
+        </select>
       </div>
+
+      {filteredNFTs.length === 0 ? (
+        <p className="text-center text-sub-text">No NFTs match your filters 🎨</p>
+      ) : (
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+          {filteredNFTs.map((nft: NFT) => (
+            <NFTCard key={nft.tokenId} nft={nft} onTransferSuccess={refetch} />
+          ))}
+        </div>
+      )}
     </div>
   );
 }
