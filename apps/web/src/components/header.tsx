@@ -13,7 +13,7 @@ const Header = () => {
   const [menuOpen, setMenuOpen] = useState(false);
 
   return (
-    <header className="flex items-center justify-between bg-content mx-5 mt-6 px-5 py-4 rounded-3xl relative">
+    <header className="flex items-center justify-between bg-content mx-5 mt-6 px-5 py-4 rounded-4xl relative">
       <Link href="/">
         <h1 className="text-primary font-bold text-lg font-roboto-mono">Bleu</h1>
       </Link>
@@ -21,7 +21,8 @@ const Header = () => {
       <nav className="hidden md:flex gap-6 text-lg">
         <NavLink href="/">Mint & Stake</NavLink>
         <NavLink href="/nfts-showcase">Your NFTs</NavLink>
-        <NavLink href="/transfer-events-showcase">Events</NavLink>
+        <NavLink href="/mint-events-showcase">Mint Events</NavLink>
+        <NavLink href="/transfer-events-showcase">Transfer Events</NavLink>
       </nav>
 
       <div className="flex items-center gap-2">
@@ -47,7 +48,8 @@ const Header = () => {
         <div className="absolute top-full left-0 w-full bg-content p-4 flex flex-col items-center space-y-3 shadow-md md:hidden z-50">
           <NavLink href="/" onClick={() => setMenuOpen(false)}>Mint & Stake</NavLink>
           <NavLink href="/nfts-showcase" onClick={() => setMenuOpen(false)}>Your NFTs</NavLink>
-          <NavLink href="/transfer-events-showcase" onClick={() => setMenuOpen(false)}>Events</NavLink>
+          <NavLink href="/transfer-events-showcase" onClick={() => setMenuOpen(false)}>Transfer Events</NavLink>
+          <NavLink href="/mint-events-showcase" onClick={() => setMenuOpen(false)}>Mint Events</NavLink>
         </div>
       )}
     </header>

@@ -12,6 +12,8 @@
     --primary: 255 4 32; /* RGB values for #ff0420 */
     --primary-foreground: 255 253 253; /* RGB values for #fffdfd */
 
+    --skeleton: 240 240 240; /* RGB values for ##f0f0f0 */
+
     --sub-text: 122 122 122; /* RGB values for #7a7a7a */
 
     --success: 92 187 37; /* RGB values for #5cbb25 */
@@ -29,6 +31,8 @@
 
     --primary: 255 4 32; /* RGB values for #ff0420 */
     --primary-foreground: 0 0 0; /* RGB values for #000000 */
+
+    --skeleton: 25 25 25; /* RGB values for #191919 */
 
     --sub-text: 184 184 184; /* RGB values for #b8b8b8 */
   }

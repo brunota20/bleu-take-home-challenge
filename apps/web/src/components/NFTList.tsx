@@ -15,12 +15,18 @@ interface NFT {
 
 const GET_NFTS = gql`
   query GetNFTs($owner: String!) {
-    nftss(where: { owner: $owner }) {
+    nfts: nftss(where: { owner: $owner }) {
       items {
         tokenId
         owner
         staked
       }
+    }
+    ownerStaker: nftss(where: { owner: $owner, staked: true }) {
+      totalCount
+    }
+    globalStaked: nftss(where: { staked: true }) {
+      totalCount
     }
   }
 `;
@@ -49,7 +55,9 @@ export default function NFTList() {
   if (loading) return <LoadingSkeleton />;
   if (error) return <p className="text-error">Error: {error.message}</p>;
 
-  const nfts = data?.nftss?.items || [];
+  const nfts = data?.nfts?.items || [];
+  const totalStakedByOwner = data?.ownerStaker?.totalCount;
+  const totalStakedGlobally = data?.globalStaked?.totalCount;
 
   const filteredNFTs = nfts.filter((nft: NFT) => {
     const matchesSearchTerm = nft.tokenId.includes(searchTerm);
@@ -61,8 +69,23 @@ export default function NFTList() {
   });
 
   return (
-    <div className='flex-col mt-4'>
+    <div className="flex-col mt-4">
       <h2 className="text-2xl text-center font-bold text-foreground mb-4">Your NFTs</h2>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+        <div className="p-4 rounded-lg bg-[rgb(var(--content))] border border-[rgb(var(--sub-text))]">
+          <h3 className="text-lg font-semibold text-[rgb(var(--foreground))]">
+            Your Staked NFTs
+          </h3>
+          <p className="text-[rgb(var(--sub-text))]">{totalStakedByOwner}</p>
+        </div>
+        <div className="p-4 rounded-lg bg-[rgb(var(--content))] border border-[rgb(var(--sub-text))]">
+          <h3 className="text-lg font-semibold text-[rgb(var(--foreground))]">
+            Global Staked NFTs
+          </h3>
+          <p className="text-[rgb(var(--sub-text))]">{totalStakedGlobally}</p>
+        </div>
+      </div>
 
       <div className="flex flex-col md:flex-row gap-4 mb-6">
         <input
@@ -83,6 +106,7 @@ export default function NFTList() {
         </select>
       </div>
 
+      {/* NFT List */}
       {filteredNFTs.length === 0 ? (
         <p className="text-center text-sub-text">No NFTs match your filters 🎨</p>
       ) : (

@@ -78,7 +78,7 @@ export default function TransferModal({ nft, onClose, onTransferSuccess }: Trans
   };
 
   return (
-    <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-30 backdrop-blur-md">
+    <div className="fixed inset-0 flex items-center justify-center bg-opacity-30 backdrop-blur-md">
       <div className="bg-content text-content-foreground rounded-lg p-6 w-96 shadow-lg">
         <h3 className="text-xl font-bold mb-4">Transfer NFT</h3>
         <p className="mb-2">Transferring NFT #{nft.tokenId}</p>

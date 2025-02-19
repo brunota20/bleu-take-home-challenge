@@ -6,17 +6,17 @@ export default function LoadingSkeleton() {
       </h2>
       <div className="flex flex-col md:flex-row gap-4 mb-6">
         <div
-          className="p-2 border rounded-lg bg-[rgb(var(--content))] border-[rgb(var(--sub-text))] animate-pulse w-full md:w-1/2 h-10"
+          className="p-2 rounded-lg bg-[rgb(var(--skeleton))] animate-pulse w-full md:w-1/2 h-10"
         ></div>
         <div
-          className="p-2 border rounded-lg bg-[rgb(var(--content))] border-[rgb(var(--sub-text))] animate-pulse w-full md:w-1/2 h-10"
+          className="p-2 rounded-lg bg-[rgb(var(--skeleton))] animate-pulse w-full md:w-1/2 h-10"
         ></div>
       </div>
       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 animate-pulse">
         {[...Array(6)].map((_, index) => (
           <div
             key={index}
-            className="bg-[rgb(var(--content))] h-40 rounded-lg"
+            className="bg-[rgb(var(--skeleton))] h-40 rounded-lg"
           ></div>
         ))}
       </div>
