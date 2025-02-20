@@ -9,6 +9,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import { useEffect, useState, useRef } from 'react'; // Add useRef
 import { Loader2, Copy } from 'lucide-react';
 import TransactionHash from './transaction-hash';
+import { setGlobalProcessing } from '@/hooks/useMintStakeStatus';
 
 const contractAdress = process.env.NEXT_PUBLIC_CONTRACT_ADDRESS;
 
@@ -30,6 +31,7 @@ export default function MintStakeControls() {
     if (receipt) {
       toast.success(`Transaction confirmed! ✅`);
       setIsLoading(false);
+      setGlobalProcessing(false);
 
       if (mintFormRef.current) mintFormRef.current.reset();
       if (stakeFormRef.current) stakeFormRef.current.reset();
@@ -60,6 +62,7 @@ export default function MintStakeControls() {
 
     try {
       setIsLoading(true);
+      setGlobalProcessing(true);
       toast.info(`Processing ${functionName} transaction...`);
 
       const hash = await writeContractAsync({
@@ -72,6 +75,8 @@ export default function MintStakeControls() {
       setTxHash(hash);
       toast.success(`Transaction submitted! ✅`);
     } catch (error: any) {
+      setGlobalProcessing(false);
+
       const errorMessage = error.message?.toLowerCase();
 
       if (error.code === 4001 || errorMessage?.includes("user denied transaction signature") || errorMessage?.includes("user rejected the request")) {
@@ -103,6 +108,8 @@ export default function MintStakeControls() {
               <input
                 name="tokenId"
                 placeholder="Enter Token ID"
+                onInvalid={(e) => (e.target as HTMLInputElement).setCustomValidity("Please fill out this field.")}
+                onInput={(e) => (e.target as HTMLInputElement).setCustomValidity("")}
                 required
                 className="w-full px-4 py-2 border border-sub-text rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent transition"
               />

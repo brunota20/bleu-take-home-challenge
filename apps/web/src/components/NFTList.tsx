@@ -3,28 +3,30 @@
 import { useAccount } from 'wagmi';
 import { gql, useQuery } from '@apollo/client';
 import LoadingSkeleton from './skeleton/loading-nfts';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { NFT } from '@/app/utils/types';
 import WalletNotConnected from './wallet-not-connected';
 import StakedSummary from './staked-summary';
 import Filters from './filters';
 import NFTGrid from './NFT-grid';
-
+import Image from 'next/image';
+import ProStamp from '@/public/pro.png';
 
 const GET_NFTS = gql`
   query GetNFTs($owner: String!) {
-    nfts: nftss(where: { owner: $owner }) {
+    nfts(where: { owner: $owner }) {
       items {
         tokenId
         owner
         staked
       }
     }
-    ownerStaker: nftss(where: { owner: $owner, staked: true }) {
+    globalStaked: nfts(where: { staked: true }) {
       totalCount
     }
-    globalStaked: nftss(where: { staked: true }) {
-      totalCount
+    userStakedCount( id: $owner ) {
+      stakedCount
+      isPro
     }
   }
 `;
@@ -33,11 +35,24 @@ export default function NFTList() {
   const { address } = useAccount();
   const { data, loading, error, refetch } = useQuery(GET_NFTS, {
     variables: { owner: address },
-    fetchPolicy: 'network-only',
+    fetchPolicy: 'no-cache',
   });
 
   const [searchTerm, setSearchTerm] = useState('');
   const [filterStaked, setFilterStaked] = useState<'all' | 'staked' | 'unstaked'>('all');
+  const [nfts, setNFTs] = useState<NFT[]>([]);
+  const [totalStakedCount, setTotalStakedCount] = useState<number>(0);
+  const [stakedCount, setStakedCount] = useState<number>(0);
+  const [isPro, setIsPro] = useState<boolean>(false);
+
+  useEffect(() => {
+    if (data) {
+      setNFTs(data?.nfts?.items || []);
+      setStakedCount(data?.userStakedCount?.stakedCount || 0);
+      setTotalStakedCount(data?.globalStaked?.totalCount || 0);
+      setIsPro(data?.userStakedCount?.isPro || false);
+    }
+  }, [data]);
 
   if (!address) {
     return <WalletNotConnected />;
@@ -46,12 +61,8 @@ export default function NFTList() {
   if (loading) return <LoadingSkeleton />;
   if (error) return <p className="text-error">Error: {error.message}</p>;
 
-  const nfts = data?.nfts?.items || [];
-  const totalStakedByOwner = data?.ownerStaker?.totalCount || 0;
-  const totalStakedGlobally = data?.globalStaked?.totalCount || 0;
-
   const filteredNFTs = nfts.filter((nft: NFT) => {
-    const matchesSearchTerm = nft.tokenId.includes(searchTerm);
+    const matchesSearchTerm = nft.tokenId.toString().includes(searchTerm);
     const matchesStakedStatus =
       filterStaked === 'all' ||
       (filterStaked === 'staked' && nft.staked) ||
@@ -62,16 +73,31 @@ export default function NFTList() {
   return (
     <div className="flex-col mt-4">
       <StakedSummary
-        totalStakedByOwner={totalStakedByOwner}
-        totalStakedGlobally={totalStakedGlobally}
+        totalStakedByOwner={stakedCount}
+        totalStakedGlobally={totalStakedCount}
       />
 
-      <div className="flex flex-row items-center">
-        <div className="flex-1"></div>
-        
+      <div className="flex flex-row items-center mb-6">
+        {/* Pro Stamp */}
+        <div className="flex-1 flex items-center justify-start">
+          {isPro && (
+            <Image
+              src={ProStamp}
+              alt="Pro Stamp"
+              width={150}
+              height={150}
+              className="rounded-full"
+              unoptimized
+            />
+          )}
+        </div>
+
+        {/* Centered "Your NFTs" heading */}
         <h2 className="text-2xl font-bold text-foreground text-center flex-1">
           Your NFTs
         </h2>
+
+        {/* Filters aligned to the right */}
         <div className="flex-1 flex justify-end">
           <Filters
             searchTerm={searchTerm}

@@ -18,6 +18,11 @@ interface NFTCardProps {
 export default function NFTCard({ nft, onTransferSuccess }: NFTCardProps) {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
+  const handleTransferSuccess = () => {
+    setIsModalOpen(false);
+    onTransferSuccess();
+  };
+
   return (
     <div className="shadow-lg rounded-xl p-4 flex flex-col items-center border hover:shadow-2xl transition bg-content border-sub-text">
       <div className="w-full h-40 flex items-center justify-center rounded-lg bg-background">
@@ -37,7 +42,7 @@ export default function NFTCard({ nft, onTransferSuccess }: NFTCardProps) {
         Transfer
       </Button>
       {isModalOpen && (
-        <TransferModal nft={nft} onClose={() => setIsModalOpen(false)} onTransferSuccess={onTransferSuccess} />
+        <TransferModal nft={nft} onClose={() => setIsModalOpen(false)} onTransferSuccess={handleTransferSuccess} />
       )}
     </div>
   );

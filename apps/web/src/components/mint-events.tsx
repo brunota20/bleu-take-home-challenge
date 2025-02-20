@@ -6,7 +6,7 @@ import EventTableSkeleton from './skeleton/events-table-skeleton';
 
 const GET_MINT_EVENTS = gql`
   query GetMintEvents {
-    transferEventss(limit: 10, where: { eventType: MINT }, orderBy: "timestamp", orderDirection: "desc") {
+    transferEvents(limit: 10, where: { eventType: MINT }, orderBy: "timestamp", orderDirection: "desc") {
       items {
         id
         to
@@ -18,12 +18,14 @@ const GET_MINT_EVENTS = gql`
 `;
 
 export default function MintEvents() {
-  const { data, loading, error } = useQuery(GET_MINT_EVENTS);
+  const { data, loading, error } = useQuery(GET_MINT_EVENTS, {
+    fetchPolicy: 'no-cache',
+  });
 
   if (loading) return <EventTableSkeleton title="Loading Mint Events..." />;
   if (error) return <p className="text-error">Error: {error.message}</p>;
 
-  const events = data?.transferEventss?.items || [];
+  const events = data?.transferEvents?.items || [];
 
   return (
     <div className='flex-col mt-4'>

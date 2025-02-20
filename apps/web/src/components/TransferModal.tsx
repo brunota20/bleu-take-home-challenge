@@ -29,15 +29,15 @@ export default function TransferModal({ nft, onClose, onTransferSuccess }: Trans
   const [txHash, setTxHash] = useState<`0x${string}` | undefined>(undefined);
   const [isTransferring, setIsTransferring] = useState(false);
 
-  const { data: owner, isLoading, error } = useReadContract({
-      address: contractAddress as `0x${string}`,
-      abi,
-      functionName: "ownerOf",
-      args: [BigInt(nft.tokenId)],
-    });
+  const { data: owner, isLoading: isOwnerLoading, error: ownerError } = useReadContract({
+    address: contractAddress as `0x${string}`,
+    abi,
+    functionName: "ownerOf",
+    args: [BigInt(nft.tokenId)],
+  });
 
   const { data: receipt, isLoading: isWaiting } = useWaitForTransactionReceipt({
-    hash: txHash || undefined,
+    hash: txHash,
   });
 
   useEffect(() => {
@@ -47,7 +47,7 @@ export default function TransferModal({ nft, onClose, onTransferSuccess }: Trans
       onTransferSuccess();
       onClose();
     }
-  }, [receipt, onClose, onTransferSuccess]);
+  }, [receipt]);
 
   const handleTransfer = async () => {
     if (!recipientAddress.startsWith('0x') || recipientAddress.length !== 42) {
@@ -102,11 +102,11 @@ export default function TransferModal({ nft, onClose, onTransferSuccess }: Trans
           </Button>
           <Button
             onClick={handleTransfer}
-            disabled={isTransferring || isWaiting}
+            disabled={isTransferring || isWaiting || isOwnerLoading}
             className="bg-primary text-primary-foreground hover:opacity-90 transition flex items-center gap-2"
           >
-            {isTransferring || isWaiting || isLoading? <Loader2 className="animate-spin w-5 h-5" /> : null}
-            {isTransferring || isWaiting || isLoading? 'Transferring...' : 'Confirm Transfer'}
+            {(isTransferring || isWaiting || isOwnerLoading) && <Loader2 className="animate-spin w-5 h-5" />}
+            {isTransferring || isWaiting || isOwnerLoading ? 'Transferring...' : 'Confirm Transfer'}
           </Button>
         </div>
         {txHash && <TransactionHash txHash={txHash} />}

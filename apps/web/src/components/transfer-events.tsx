@@ -6,7 +6,7 @@ import EventTableSkeleton from './skeleton/events-table-skeleton';
 
 const GET_TRANSFER_EVENTS = gql`
   query GetTransferEvents {
-    transferEventss(limit: 10, where: { eventType: TRANSFER }, orderBy: "timestamp", orderDirection: "desc") {
+    transferEvents(limit: 10, where: { eventType: TRANSFER }, orderBy: "timestamp", orderDirection: "desc") {
       items {
         id
         from
@@ -19,12 +19,14 @@ const GET_TRANSFER_EVENTS = gql`
 `;
 
 export default function TransferEvents() {
-  const { data, loading, error } = useQuery(GET_TRANSFER_EVENTS);
+  const { data, loading, error } = useQuery(GET_TRANSFER_EVENTS, {
+    fetchPolicy: 'no-cache',
+  });
 
   if (loading) return <EventTableSkeleton title='Loading Transfer Events...'/>;
   if (error) return <p className="text-error">Error: {error.message}</p>;
 
-  const events = data?.transferEventss?.items || [];
+  const events = data?.transferEvents?.items || [];
 
   return (
     <div className='flex-col mt-4'>

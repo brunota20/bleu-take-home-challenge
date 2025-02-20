@@ -3,8 +3,8 @@ import { onchainTable, index, onchainEnum } from "ponder";
 export const eventType = onchainEnum("eventType", ["TRANSFER", "MINT"]);
 export const eventTypeControl = onchainEnum("eventTypeControl", ["STAKED", "UNSTAKED"]);
 
-export const transferEvents = onchainTable(
-  "transferEvents",
+export const transferEvent = onchainTable(
+  "transferEvent",
   (t) => ({
     id: t.text().primaryKey(),
     from: t.text().notNull(),
@@ -20,26 +20,40 @@ export const transferEvents = onchainTable(
 );
 
 
-export const stakingEvents = onchainTable(
-  "stakingEvents",
+export const stakingEvent = onchainTable(
+  "stakingEvent",
   (t) => ({
     id: t.text().primaryKey(),
     owner: t.text().notNull(),
     tokenId: t.bigint().notNull(),
     eventType: eventTypeControl().notNull(),
-    timestamp: t.bigint().notNull(), // Track event timestamp
+    timestamp: t.bigint().notNull(),
   }),
   (table) => ({
     tokenIdx: index().on(table.tokenId),
+    ownerIdx: index().on(table.owner),
   })
 );
 
 
-export const nfts = onchainTable(
-  "nfts",
+export const nft = onchainTable(
+  "nft",
   (t) => ({
     tokenId: t.bigint().primaryKey(),
     owner: t.text().notNull(),
     staked: t.boolean().default(false),
+  })
+);
+
+
+export const userStakedCount = onchainTable(
+  "userStakedCount",
+  (t) => ({
+    id: t.text().primaryKey(),
+    stakedCount: t.integer().notNull().default(0),
+    isPro: t.boolean().default(false),
+  }),
+  (table) => ({
+    userIdx: index().on(table.id),
   })
 );
