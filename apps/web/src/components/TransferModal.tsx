@@ -1,7 +1,7 @@
 'use client';
 
 import * as React from 'react';
-import { useWriteContract, useAccount, useWaitForTransactionReceipt } from 'wagmi';
+import { useWriteContract, useAccount, useWaitForTransactionReceipt, useReadContract } from 'wagmi';
 import { Button } from '@/components/ui/button';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -27,7 +27,14 @@ export default function TransferModal({ nft, onClose, onTransferSuccess }: Trans
   const { address } = useAccount();
   const [recipientAddress, setRecipientAddress] = useState('');
   const [txHash, setTxHash] = useState<`0x${string}` | undefined>(undefined);
-  const [isLoading, setIsLoading] = useState(false);
+  const [isTransferring, setIsTransferring] = useState(false);
+
+  const { data: owner, isLoading, error } = useReadContract({
+      address: contractAddress as `0x${string}`,
+      abi,
+      functionName: "ownerOf",
+      args: [BigInt(nft.tokenId)],
+    });
 
   const { data: receipt, isLoading: isWaiting } = useWaitForTransactionReceipt({
     hash: txHash || undefined,
@@ -36,7 +43,7 @@ export default function TransferModal({ nft, onClose, onTransferSuccess }: Trans
   useEffect(() => {
     if (receipt) {
       toast.success('NFT transferred successfully! ✅');
-      setIsLoading(false);
+      setIsTransferring(false);
       onTransferSuccess();
       onClose();
     }
@@ -59,20 +66,20 @@ export default function TransferModal({ nft, onClose, onTransferSuccess }: Trans
     }
 
     try {
-      setIsLoading(true);
+      setIsTransferring(true);
       toast.info('Processing NFT transfer...');
 
       const hash = await writeContractAsync({
         address: contractAddress as `0x${string}`,
         abi,
-        functionName: 'transferFrom',
-        args: [address, recipientAddress as `0x${string}`, BigInt(nft.tokenId)],
+        functionName: "safeTransferFrom",
+        args: [owner as `0x${string}`, recipientAddress as `0x${string}`, BigInt(nft.tokenId)],
       });
 
       setTxHash(hash);
       toast.success('Transaction submitted! ✅');
     } catch (error: any) {
-      setIsLoading(false);
+      setIsTransferring(false);
       toast.error(`Error: ${error.message || 'Something went wrong.'}`);
     }
   };
@@ -95,11 +102,11 @@ export default function TransferModal({ nft, onClose, onTransferSuccess }: Trans
           </Button>
           <Button
             onClick={handleTransfer}
-            disabled={isLoading || isWaiting}
+            disabled={isTransferring || isWaiting}
             className="bg-primary text-primary-foreground hover:opacity-90 transition flex items-center gap-2"
           >
-            {isLoading || isWaiting ? <Loader2 className="animate-spin w-5 h-5" /> : null}
-            {isLoading || isWaiting ? 'Transferring...' : 'Confirm Transfer'}
+            {isTransferring || isWaiting || isLoading? <Loader2 className="animate-spin w-5 h-5" /> : null}
+            {isTransferring || isWaiting || isLoading? 'Transferring...' : 'Confirm Transfer'}
           </Button>
         </div>
         {txHash && <TransactionHash txHash={txHash} />}
