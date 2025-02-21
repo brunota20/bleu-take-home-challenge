@@ -10,6 +10,7 @@ import { Loader2 } from 'lucide-react';
 import { abi } from '@/app/utils/abis/BleuNFTABI';
 import TransactionHash from './transaction-hash';
 import { Input } from './ui/text-input';
+import { handleTransactionError } from '../app/utils/handle-transaction-error';
 
 interface NFT {
   tokenId: string;
@@ -81,7 +82,7 @@ export default function TransferModal({ nft, onClose, onTransferSuccess }: Trans
       toast.success('Transaction submitted! ✅');
     } catch (error: any) {
       setIsTransferring(false);
-      toast.error(`Error: ${error.message || 'Something went wrong.'}`);
+      handleTransactionError(error);
     }
   };
 
@@ -98,7 +99,13 @@ export default function TransferModal({ nft, onClose, onTransferSuccess }: Trans
           className="w-full mb-4"
         />
         <div className="flex justify-end">
-          <Button onClick={onClose} className="mr-2 bg-background text-foreground hover:opacity-90 transition">
+          <Button
+            onClick={() => {
+              toast.warning("Transfer process was canceled ❌");
+              onClose();
+            }}
+            className="mr-2 bg-background text-foreground hover:opacity-90 transition"
+          >
             Cancel
           </Button>
           <Button

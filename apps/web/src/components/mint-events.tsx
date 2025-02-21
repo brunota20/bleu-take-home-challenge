@@ -1,21 +1,9 @@
 'use client';
 
-import { gql, useQuery } from '@apollo/client';
+import { useQuery } from '@apollo/client';
 import EventTable from './event-table';
 import EventTableSkeleton from './skeleton/events-table-skeleton';
-
-const GET_MINT_EVENTS = gql`
-  query GetMintEvents {
-    transferEvents(limit: 10, where: { eventType: MINT }, orderBy: "timestamp", orderDirection: "desc") {
-      items {
-        id
-        to
-        tokenId
-        timestamp
-      }
-    }
-  }
-`;
+import { GET_MINT_EVENTS } from '@/app/queries/get-mint-events';
 
 export default function MintEvents() {
   const { data, loading, error } = useQuery(GET_MINT_EVENTS, {

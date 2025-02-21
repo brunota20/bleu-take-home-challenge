@@ -4,6 +4,8 @@ import './globals.css';
 import Header from '@/components/header';
 import { cn } from '@/lib/utils';
 import { Providers } from '@/providers';
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const rubik = Rubik({
   weight: ['400', '500', '700'],
@@ -25,6 +27,7 @@ export default function RootLayout({
       <body className={cn(rubik.className, 'bg-background text-foreground')}>
         <Providers>
           <Header />
+          <ToastContainer position="top-right" autoClose={5000} />
           {children}
         </Providers>
       </body>

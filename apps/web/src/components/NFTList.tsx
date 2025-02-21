@@ -1,7 +1,7 @@
 'use client';
 
 import { useAccount } from 'wagmi';
-import { gql, useQuery } from '@apollo/client';
+import { useQuery } from '@apollo/client';
 import { useState, useEffect } from 'react';
 import { NFT } from '@/app/utils/types';
 import WalletNotConnected from './wallet-not-connected';
@@ -9,24 +9,7 @@ import LoadingSkeleton from './skeleton/loading-nfts';
 import StakedSummary from './staked-summary';
 import NFTHeader from './NFTHeader';
 import NFTDisplay from './NFT-display';
-const GET_NFTS = gql`
-  query GetNFTs($owner: String!) {
-    nfts(where: { owner: $owner }) {
-      items {
-        tokenId
-        owner
-        staked
-      }
-    }
-    globalStaked: nfts(where: { staked: true }) {
-      totalCount
-    }
-    userStakedCount(id: $owner) {
-      stakedCount
-      isPro
-    }
-  }
-`;
+import { GET_NFTS } from '@/app/queries/get-nfts';
 
 export default function NFTList() {
   const { address } = useAccount();

@@ -1,22 +1,9 @@
 'use client';
 
-import { gql, useQuery } from '@apollo/client';
+import { useQuery } from '@apollo/client';
 import EventTable from './event-table';
 import EventTableSkeleton from './skeleton/events-table-skeleton';
-
-const GET_TRANSFER_EVENTS = gql`
-  query GetTransferEvents {
-    transferEvents(limit: 10, where: { eventType: TRANSFER }, orderBy: "timestamp", orderDirection: "desc") {
-      items {
-        id
-        from
-        to
-        tokenId
-        timestamp
-      }
-    }
-  }
-`;
+import { GET_TRANSFER_EVENTS } from '@/app/queries/get-transfer-events';
 
 export default function TransferEvents() {
   const { data, loading, error } = useQuery(GET_TRANSFER_EVENTS, {

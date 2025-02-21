@@ -1,5 +1,4 @@
 import { useState, useEffect } from 'react';
-import { useWaitForTransactionReceipt } from 'wagmi';
 
 let globalSetProcessing: ((state: boolean) => void) | null = null;
 

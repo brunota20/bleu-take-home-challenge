@@ -1,18 +1,18 @@
 'use client';
 
-import * as React from 'react';
 import { useWriteContract, useAccount, useWaitForTransactionReceipt } from 'wagmi';
 import { Button } from '@/components/ui/button';
 import { abi } from '@/app/utils/abis/BleuNFTABI';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { useEffect, useState, useRef } from 'react';
-import { Loader2, Copy } from 'lucide-react';
+import { Loader2 } from 'lucide-react';
 import TransactionHash from './transaction-hash';
 import { setGlobalProcessing } from '@/hooks/useMintStakeStatus';
 import { Input } from './ui/text-input';
+import { handleTransactionError } from '../app/utils/handle-transaction-error';
 
-const contractAdress = process.env.NEXT_PUBLIC_CONTRACT_ADDRESS;
+const contractAddress = process.env.NEXT_PUBLIC_CONTRACT_ADDRESS;
 
 export default function MintStakeControls() {
   const { writeContractAsync } = useWriteContract();
@@ -30,36 +30,42 @@ export default function MintStakeControls() {
 
   useEffect(() => {
     if (receipt) {
-      toast.success(`Transaction confirmed! ✅`);
+      toast.success('Transaction confirmed! ✅');
       setIsLoading(false);
       setGlobalProcessing(false);
 
-      if (mintFormRef.current) mintFormRef.current.reset();
-      if (stakeFormRef.current) stakeFormRef.current.reset();
-      if (unstakeFormRef.current) unstakeFormRef.current.reset();
+      mintFormRef.current?.reset();
+      stakeFormRef.current?.reset();
+      unstakeFormRef.current?.reset();
     }
   }, [receipt]);
 
-  async function handleSubmit(e: React.FormEvent<HTMLFormElement>, functionName: "mint" | "stake" | "unstake") {
+  async function handleSubmit(
+    e: React.FormEvent<HTMLFormElement>,
+    functionName: 'mint' | 'stake' | 'unstake'
+  ) {
     e.preventDefault();
 
     if (!address) {
-      toast.error("Wallet not connected! Please connect your wallet.");
+      toast.error('Wallet not connected! Please connect your wallet.');
       return;
     }
 
     const formData = new FormData(e.target as HTMLFormElement);
-    const tokenId = formData.get("tokenId") as string;
+    const tokenIdString = formData.get('tokenId') as string;
 
-    if (!tokenId) {
-      toast.error("Please enter a valid Token ID");
+    if (!tokenIdString) {
+      toast.error('Please enter a Token ID.');
       return;
     }
 
-    if (!contractAdress || !contractAdress.startsWith("0x")) {
-      toast.error("Contract address is invalid.");
+    // Check if input is a valid positive integer
+    if (!/^\d+$/.test(tokenIdString)) {
+      toast.error('Invalid Token ID. Please enter a number.');
       return;
     }
+
+    const tokenId = BigInt(tokenIdString);
 
     try {
       setIsLoading(true);
@@ -67,28 +73,17 @@ export default function MintStakeControls() {
       toast.info(`Processing ${functionName} transaction...`);
 
       const hash = await writeContractAsync({
-        address: contractAdress as `0x${string}`,
+        address: contractAddress as `0x${string}`,
         abi,
         functionName,
-        args: functionName === "mint" ? [address as `0x${string}`, BigInt(tokenId)] : [BigInt(tokenId)],
+        args: functionName === 'mint' ? [address as `0x${string}`, tokenId] : [tokenId],
       });
 
       setTxHash(hash);
-      toast.success(`Transaction submitted! ✅`);
+      toast.success('Transaction submitted! ✅');
     } catch (error: any) {
       setGlobalProcessing(false);
-
-      const errorMessage = error.message?.toLowerCase();
-
-      if (error.code === 4001 || errorMessage?.includes("user denied transaction signature") || errorMessage?.includes("user rejected the request")) {
-        toast.warning("Transaction was canceled by the user. ❌");
-      } else if (errorMessage?.includes("insufficient funds")) {
-        toast.error("Insufficient funds to complete the transaction.");
-      } else if (errorMessage?.includes("reverted") || errorMessage?.includes("execution reverted")) {
-        toast.error("Transaction failed. It might have been rejected by the contract.");
-      } else {
-        toast.error(`Error: ${error.message || "Something went wrong."}`);
-      }
+      handleTransactionError(error);
     } finally {
       setIsLoading(false);
     }
@@ -99,28 +94,29 @@ export default function MintStakeControls() {
       <div className="max-w-md mx-auto bg-content shadow-lg rounded-xl p-8 space-y-8">
         <h2 className="text-2xl font-bold text-foreground text-center">NFT Mint & Stake</h2>
 
-        {["mint", "stake", "unstake"].map((action) => (
+        {['mint', 'stake', 'unstake'].map((action) => (
           <form
             key={action}
-            ref={action === "mint" ? mintFormRef : action === "stake" ? stakeFormRef : unstakeFormRef} // Assign refs
-            onSubmit={(e) => handleSubmit(e, action as "mint" | "stake" | "unstake")}
+            ref={action === 'mint' ? mintFormRef : action === 'stake' ? stakeFormRef : unstakeFormRef}
+            onSubmit={(e) => handleSubmit(e, action as 'mint' | 'stake' | 'unstake')}
           >
             <div className="relative">
-              <Input 
-                name="tokenId" 
-                placeholder="Enter Token ID" 
-                validateOnInvalid 
-                validateOnInput 
-                required 
+              <Input
+                data-testid={`${action}-tokenId`}
+                name="tokenId"
+                placeholder="Enter Token ID"
+                validateOnInvalid
+                validateOnInput
+                required
               />
             </div>
             <Button
-              disabled={!address || isLoading || isWaiting}
+              disabled={isLoading || isWaiting}
               type="submit"
               className="w-full mt-2 flex items-center justify-center gap-2"
             >
-              {isLoading || isWaiting ? <Loader2 className="animate-spin w-5 h-5" /> : null}
-              {isLoading || isWaiting ? "Processing..." : `${action.charAt(0).toUpperCase() + action.slice(1)} NFT`}
+              {(isLoading || isWaiting) && <Loader2 className="animate-spin w-5 h-5" />}
+              {isLoading || isWaiting ? 'Processing...' : `${action.charAt(0).toUpperCase() + action.slice(1)} NFT`}
             </Button>
           </form>
         ))}

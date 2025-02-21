@@ -1,5 +1,7 @@
 'use client';
 
+import { formatTimestamp, truncateAddress } from "@/app/utils/functions";
+
 interface Event {
   id: string;
   from?: string;
@@ -11,12 +13,6 @@ interface Event {
 interface EventTableProps {
   events: Event[];
 }
-
-const truncateAddress = (address?: string) =>
-  address ? `${address.slice(0, 6)}...${address.slice(-4)}` : 'N/A';
-
-const formatTimestamp = (timestamp: string) =>
-  new Date(Number(timestamp) * 1000).toLocaleString();
 
 export default function EventTable({ events }: EventTableProps) {
 

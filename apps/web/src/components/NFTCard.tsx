@@ -24,7 +24,7 @@ export default function NFTCard({ nft, onTransferSuccess }: NFTCardProps) {
   };
 
   return (
-    <div className="shadow-lg rounded-xl p-4 flex flex-col items-center border hover:shadow-2xl transition bg-content border-sub-text">
+    <div data-testid='nft-card' className="shadow-lg rounded-xl p-4 flex flex-col items-center border hover:shadow-2xl transition bg-content border-sub-text">
       <div className="w-full h-40 flex items-center justify-center rounded-lg bg-background">
         <span className="text-lg text-sub-text">NFT #{nft.tokenId}</span>
       </div>
