@@ -30,7 +30,22 @@ export default function MintStakeControls() {
 
   useEffect(() => {
     if (receipt) {
-      toast.success('Transaction confirmed! ✅');
+      toast.success(
+        ({ closeToast }) => (
+          <div>
+            Transaction confirmed!{' '}
+            <a 
+              href={`https://sepolia.etherscan.io/tx/${receipt.transactionHash}`} 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="underline text-blue-500 hover:text-blue-700"
+            >
+              View on Etherscan
+            </a>
+          </div>
+        )
+      );
+
       setIsLoading(false);
       setGlobalProcessing(false);
 

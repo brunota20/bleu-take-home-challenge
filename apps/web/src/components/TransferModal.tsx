@@ -44,7 +44,21 @@ export default function TransferModal({ nft, onClose, onTransferSuccess }: Trans
 
   useEffect(() => {
     if (receipt) {
-      toast.success('NFT transferred successfully! ✅');
+      toast.success(
+        ({ closeToast }) => (
+          <div>
+            NFT transferred successfully!{' '}
+            <a 
+              href={`https://sepolia.etherscan.io/tx/${receipt.transactionHash}`} 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="underline text-blue-500 hover:text-blue-700"
+            >
+              View on Etherscan
+            </a>
+          </div>
+        )
+      );
       setIsTransferring(false);
       onTransferSuccess();
       onClose();
