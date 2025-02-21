@@ -6,10 +6,11 @@ import { Button } from '@/components/ui/button';
 import { abi } from '@/app/utils/abis/BleuNFTABI';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import { useEffect, useState, useRef } from 'react'; // Add useRef
+import { useEffect, useState, useRef } from 'react';
 import { Loader2, Copy } from 'lucide-react';
 import TransactionHash from './transaction-hash';
 import { setGlobalProcessing } from '@/hooks/useMintStakeStatus';
+import { Input } from './ui/text-input';
 
 const contractAdress = process.env.NEXT_PUBLIC_CONTRACT_ADDRESS;
 
@@ -105,13 +106,12 @@ export default function MintStakeControls() {
             onSubmit={(e) => handleSubmit(e, action as "mint" | "stake" | "unstake")}
           >
             <div className="relative">
-              <input
-                name="tokenId"
-                placeholder="Enter Token ID"
-                onInvalid={(e) => (e.target as HTMLInputElement).setCustomValidity("Please fill out this field.")}
-                onInput={(e) => (e.target as HTMLInputElement).setCustomValidity("")}
-                required
-                className="w-full px-4 py-2 border border-sub-text rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent transition"
+              <Input 
+                name="tokenId" 
+                placeholder="Enter Token ID" 
+                validateOnInvalid 
+                validateOnInput 
+                required 
               />
             </div>
             <Button

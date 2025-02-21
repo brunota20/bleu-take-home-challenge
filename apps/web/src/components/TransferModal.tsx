@@ -9,6 +9,7 @@ import { useEffect, useState } from 'react';
 import { Loader2 } from 'lucide-react';
 import { abi } from '@/app/utils/abis/BleuNFTABI';
 import TransactionHash from './transaction-hash';
+import { Input } from './ui/text-input';
 
 interface NFT {
   tokenId: string;
@@ -89,12 +90,12 @@ export default function TransferModal({ nft, onClose, onTransferSuccess }: Trans
       <div className="bg-content text-content-foreground rounded-lg p-6 w-96 shadow-lg">
         <h3 className="text-xl font-bold mb-4">Transfer NFT</h3>
         <p className="mb-2">Transferring NFT #{nft.tokenId}</p>
-        <input
+        <Input
           type="text"
           placeholder="Recipient Address"
           value={recipientAddress}
           onChange={(e) => setRecipientAddress(e.target.value)}
-          className="w-full p-2 border rounded-lg mb-4 bg-content text-content-foreground border-sub-text"
+          className="w-full mb-4"
         />
         <div className="flex justify-end">
           <Button onClick={onClose} className="mr-2 bg-background text-foreground hover:opacity-90 transition">

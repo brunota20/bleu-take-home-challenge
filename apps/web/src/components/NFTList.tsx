@@ -2,16 +2,13 @@
 
 import { useAccount } from 'wagmi';
 import { gql, useQuery } from '@apollo/client';
-import LoadingSkeleton from './skeleton/loading-nfts';
 import { useState, useEffect } from 'react';
 import { NFT } from '@/app/utils/types';
 import WalletNotConnected from './wallet-not-connected';
+import LoadingSkeleton from './skeleton/loading-nfts';
 import StakedSummary from './staked-summary';
-import Filters from './filters';
-import NFTGrid from './NFT-grid';
-import Image from 'next/image';
-import ProStamp from '@/public/pro.png';
-
+import NFTHeader from './NFTHeader';
+import NFTDisplay from './NFT-display';
 const GET_NFTS = gql`
   query GetNFTs($owner: String!) {
     nfts(where: { owner: $owner }) {
@@ -24,7 +21,7 @@ const GET_NFTS = gql`
     globalStaked: nfts(where: { staked: true }) {
       totalCount
     }
-    userStakedCount( id: $owner ) {
+    userStakedCount(id: $owner) {
       stakedCount
       isPro
     }
@@ -54,14 +51,11 @@ export default function NFTList() {
     }
   }, [data]);
 
-  if (!address) {
-    return <WalletNotConnected />;
-  }
-
+  if (!address) return <WalletNotConnected />;
   if (loading) return <LoadingSkeleton />;
   if (error) return <p className="text-error">Error: {error.message}</p>;
 
-  const filteredNFTs = nfts.filter((nft: NFT) => {
+  const filteredNFTs = nfts.filter((nft) => {
     const matchesSearchTerm = nft.tokenId.toString().includes(searchTerm);
     const matchesStakedStatus =
       filterStaked === 'all' ||
@@ -72,47 +66,15 @@ export default function NFTList() {
 
   return (
     <div className="flex-col mt-4">
-      <StakedSummary
-        totalStakedByOwner={stakedCount}
-        totalStakedGlobally={totalStakedCount}
+      <StakedSummary totalStakedByOwner={stakedCount} totalStakedGlobally={totalStakedCount} />
+      <NFTHeader
+        isPro={isPro}
+        searchTerm={searchTerm}
+        setSearchTerm={setSearchTerm}
+        filterStaked={filterStaked}
+        setFilterStaked={setFilterStaked}
       />
-
-      <div className="flex flex-row items-center mb-6">
-        {/* Pro Stamp */}
-        <div className="flex-1 flex items-center justify-start">
-          {isPro && (
-            <Image
-              src={ProStamp}
-              alt="Pro Stamp"
-              width={150}
-              height={150}
-              className="rounded-full"
-              unoptimized
-            />
-          )}
-        </div>
-
-        {/* Centered "Your NFTs" heading */}
-        <h2 className="text-2xl font-bold text-foreground text-center flex-1">
-          Your NFTs
-        </h2>
-
-        {/* Filters aligned to the right */}
-        <div className="flex-1 flex justify-end">
-          <Filters
-            searchTerm={searchTerm}
-            setSearchTerm={setSearchTerm}
-            filterStaked={filterStaked}
-            setFilterStaked={setFilterStaked}
-          />
-        </div>
-      </div>
-
-      {filteredNFTs.length === 0 ? (
-        <p className="text-center text-sub-text">No NFTs match your filters 🎨</p>
-      ) : (
-        <NFTGrid filteredNFTs={filteredNFTs} onTransferSuccess={refetch} />
-      )}
+      <NFTDisplay filteredNFTs={filteredNFTs} onTransferSuccess={refetch} />
     </div>
   );
 }

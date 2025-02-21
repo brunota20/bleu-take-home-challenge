@@ -17,6 +17,7 @@ export default {
           DEFAULT: "rgb(var(--content))",
           foreground: "rgb(var(--content-foreground))",
         },
+        "skeleton": "rgb(var(--skeleton))",
         "sub-text": "rgb(var(--sub-text))",
         success: "rgb(var(--success))",
         important: "rgb(var(--important))",
