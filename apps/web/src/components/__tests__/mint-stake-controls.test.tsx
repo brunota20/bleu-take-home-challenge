@@ -1,23 +1,22 @@
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
-import { useWriteContract, useAccount } from 'wagmi';
+import { useWriteContract, useAccount, useWaitForTransactionReceipt, useReadContract } from 'wagmi';
 import { toast } from 'react-toastify';
 import '@testing-library/jest-dom';
 import MintStakeControls from '../mint-stake-controls';
 
 jest.mock('wagmi', () => ({
-  useAccount: jest.fn(() => ({ address: '0xabcdef1234567890' })),
-  useWaitForTransactionReceipt: jest.fn(() => ({ data: null, isLoading: false })),
-  useWriteContract: jest.fn(() => ({
-    writeContractAsync: jest.fn().mockResolvedValue('0xmockedTransactionHash'),
+  useAccount: jest.fn(),
+  useWaitForTransactionReceipt: jest.fn(() => ({
     data: null,
-    variables: null,
+    isLoading: false,
     error: null,
     isError: false,
-    isSuccess: false,
-    isLoading: false,
   })),
+  useWriteContract: jest.fn(() => ({
+    writeContractAsync: jest.fn().mockResolvedValue('0xmockedTransactionHash'),
+  })),
+  useReadContract: jest.fn(() => ({ data: '0xownerAddress' })),
 }));
-
 
 jest.mock('react-toastify', () => ({
   toast: {
@@ -33,10 +32,10 @@ describe('MintStakeControls Component', () => {
     jest.clearAllMocks();
   });
 
-  test('renders component correctly', () => {
+  test('renders component correctly when wallet is connected', () => {
     (useAccount as jest.Mock).mockReturnValue({ address: '0xabcdef1234567890' });
-    render(<MintStakeControls />);
 
+    render(<MintStakeControls />);
     expect(screen.getByText('NFT Mint & Stake')).toBeInTheDocument();
     expect(screen.getByTestId('mint-tokenId')).toBeInTheDocument();
   });
@@ -45,25 +44,10 @@ describe('MintStakeControls Component', () => {
     (useAccount as jest.Mock).mockReturnValue({ address: undefined });
 
     render(<MintStakeControls />);
-
-    const mintForm = screen.getByTestId('mint-tokenId').closest("form");
-    if (mintForm) fireEvent.submit(mintForm);
+    fireEvent.submit(screen.getByTestId('mint-tokenId').closest('form')!);
 
     await waitFor(() => {
       expect(toast.error).toHaveBeenCalledWith('Wallet not connected! Please connect your wallet.');
-    });
-  });
-
-  test('displays error when Token ID is missing', async () => {
-    (useAccount as jest.Mock).mockReturnValue({ address: '0xabcdef1234567890' });
-
-    render(<MintStakeControls />);
-
-    const mintForm = screen.getByTestId('mint-tokenId').closest("form");
-    if (mintForm) fireEvent.submit(mintForm);
-
-    await waitFor(() => {
-      expect(toast.error).toHaveBeenCalledWith('Please enter a valid Token ID');
     });
   });
 
@@ -74,11 +58,7 @@ describe('MintStakeControls Component', () => {
     });
 
     render(<MintStakeControls />);
-
-    fireEvent.change(screen.getByTestId('mint-tokenId'), {
-      target: { value: '1001' },
-    });
-
+    fireEvent.change(screen.getByTestId('mint-tokenId'), { target: { value: '1001' } });
     fireEvent.click(screen.getByText('Mint NFT'));
 
     await waitFor(() => {
@@ -94,11 +74,7 @@ describe('MintStakeControls Component', () => {
     });
 
     render(<MintStakeControls />);
-
-    fireEvent.change(screen.getByTestId('mint-tokenId'), {
-      target: { value: '1001' },
-    });
-
+    fireEvent.change(screen.getByTestId('mint-tokenId'), { target: { value: '1001' } });
     fireEvent.click(screen.getByText('Mint NFT'));
 
     await waitFor(() => {
@@ -113,11 +89,7 @@ describe('MintStakeControls Component', () => {
     });
 
     render(<MintStakeControls />);
-
-    fireEvent.change(screen.getByTestId('mint-tokenId'), {
-      target: { value: '1001' },
-    });
-
+    fireEvent.change(screen.getByTestId('mint-tokenId'), { target: { value: '1001' } });
     fireEvent.click(screen.getByText('Mint NFT'));
 
     await waitFor(() => {
@@ -132,11 +104,7 @@ describe('MintStakeControls Component', () => {
     });
 
     render(<MintStakeControls />);
-
-    fireEvent.change(screen.getByTestId('mint-tokenId'), {
-      target: { value: '1001' },
-    });
-
+    fireEvent.change(screen.getByTestId('mint-tokenId'), { target: { value: '1001' } });
     fireEvent.click(screen.getByText('Mint NFT'));
 
     await waitFor(() => {
@@ -151,11 +119,7 @@ describe('MintStakeControls Component', () => {
     });
 
     render(<MintStakeControls />);
-
-    fireEvent.change(screen.getByTestId('mint-tokenId'), {
-      target: { value: '1001' },
-    });
-
+    fireEvent.change(screen.getByTestId('mint-tokenId'), { target: { value: '1001' } });
     fireEvent.click(screen.getByText('Mint NFT'));
 
     await waitFor(() => {

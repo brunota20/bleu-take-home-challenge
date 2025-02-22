@@ -1,0 +1,6 @@
+BleuNFTTest:testMint() (gas: 67309)
+BleuNFTTest:testStake() (gas: 117966)
+BleuNFTTest:testUnstake() (gas: 93693)
+BleuNFTTest:test_RevertWhen_NonOwnerMints() (gas: 15452)
+BleuNFTTest:test_RevertWhen_NotOwnerStakes() (gas: 67397)
+BleuNFTTest:test_RevertWhen_NotStakerUnstakes() (gas: 116162)

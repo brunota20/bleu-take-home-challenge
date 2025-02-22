@@ -61,7 +61,7 @@ export default function MintStakeControls() {
       setIsWaiting(false);
       setIsError(false);
       setGlobalProcessing(false);
-      setTxHash(undefined); // Clear tx hash for next transaction
+      setTxHash(undefined);
 
       // Reset form fields
       Object.values(formRefs).forEach((ref) => ref.current?.reset());

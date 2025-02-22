@@ -5,7 +5,7 @@ import dotenv from "dotenv";
 dotenv.config({ path: "../../../.env.local" });
 
 // Configuration constants
-const schemaRegistryContractAddress = "0x0a7E2Ff54e76B8E6659aedc9103FB21c038050D0"; // Sepolia 0.26
+const schemaRegistryContractAddress = process.env.SCHEMA_REGISTRY_CONTRACT_ADDRESS || ""; // Sepolia 0.26
 const schemaRegistry = new SchemaRegistry(schemaRegistryContractAddress);
 
 async function registerSchema() {

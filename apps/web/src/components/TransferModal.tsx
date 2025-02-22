@@ -11,6 +11,7 @@ import { abi } from '@/app/utils/abis/BleuNFTABI';
 import TransactionHash from './transaction-hash';
 import { Input } from './ui/text-input';
 import { handleTransactionError } from '../app/utils/handle-transaction-error';
+import { contractAddress } from '@/app/utils/contractAddress';
 
 interface NFT {
   tokenId: string;
@@ -22,8 +23,6 @@ interface TransferModalProps {
   onTransferSuccess: () => void;
 }
 
-const contractAddress = process.env.NEXT_PUBLIC_CONTRACT_ADDRESS;
-
 export default function TransferModal({ nft, onClose, onTransferSuccess }: TransferModalProps) {
   const { writeContractAsync } = useWriteContract();
   const { address } = useAccount();
@@ -32,7 +31,7 @@ export default function TransferModal({ nft, onClose, onTransferSuccess }: Trans
   const [isTransferring, setIsTransferring] = useState(false);
 
   const { data: owner, isLoading: isOwnerLoading, error: ownerError } = useReadContract({
-    address: contractAddress as `0x${string}`,
+    address: contractAddress,
     abi,
     functionName: "ownerOf",
     args: [BigInt(nft.tokenId)],

@@ -4,6 +4,8 @@ import { BleuNFTAbi } from './abis/BleuNFTAbi';
 import { ERC721Abi } from './abis/ERC721Abi';
 import { OwnableAbi } from './abis/OwnableAbi';
 
+const contractAddress = process.env.CONTRACT_ADDRESS;
+
 export default createConfig({
   networks: {
     sepolia: {
@@ -16,7 +18,7 @@ export default createConfig({
     BleuNFT: {
       network: 'sepolia',
       abi: mergeAbis([ERC721Abi, OwnableAbi, BleuNFTAbi]),
-      address: '0xEe763b54Fb7b8De7871113Ac4654BE4AEA4681df',
+      address: contractAddress as `0x${string}`,
     },
   },
 });

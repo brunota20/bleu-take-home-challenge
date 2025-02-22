@@ -5,8 +5,8 @@ import dotenv from "dotenv";
 dotenv.config({ path: "../../../.env.local" });
 
 // Configuration
-const easContractAddress = "0xC2679fBD37d54388Ce493F1DB75320D236e1815e"; // EAS contract address
-const schemaUID = "0xf6c07878be56af4169772818e1fb73d5c13c7afa436549c6d4e199bc560732e0";
+const easContractAddress = process.env.EAS_CONTRACT_ADDRESS || "";
+const schemaUID = process.env.SCHEMA_UID || "";
 
 // Initialize EAS
 const eas = new EAS(easContractAddress);

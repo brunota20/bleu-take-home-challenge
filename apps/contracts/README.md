@@ -11,7 +11,7 @@ This directory contains the smart contract implementation for the Bleu NFT staki
 
 ## Contract Architecture
 
-The main contract `BleuNFT` inherits from OpenZeppelin's ERC721 and implements:
+The main contract `BleuNFT` inherits from OpenZeppelin's ERC721 and Ownable and implements:
 
 - `mint()`: Allows users to mint new NFTs
 - `stake()`: Enables NFT staking

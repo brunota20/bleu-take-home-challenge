@@ -13,9 +13,9 @@ Welcome to the **Bleu** challenge! This monorepo contains a full-stack dapp impl
 
 ## Key Features
 
-- **Smart Contract**: ERC721 NFT with staking capabilities
-- **Frontend**: Next.js app with wallet integration
-- **Indexer**: Ponder-based event indexing with GraphQL API
+- **Smart Contract**: ERC721 NFT with staking capabilities, utilizing Ownable for access control.
+- **Frontend**: Next.js app with wallet integration.
+- **Indexer**: Ponder-based event indexing with a GraphQL API, including an EAS attestation to verify if a user is Pro when they have 5 or more NFTs staked.
 
 ## Getting Started
 
@@ -34,9 +34,6 @@ corepack prepare pnpm@10.2.1 --activate
 
 # Install dependencies
 pnpm install
-
-# Set up environment variables
-pnpm setup:env
 
 # Start all services in development mode
 pnpm dev
@@ -92,10 +89,13 @@ See [apps/contracts/README.md](apps/contracts/README.md) for contract-specific d
 
 The Next.js frontend features:
 
-- Wallet connection (via ConnectKit)
-- NFT minting interface
-- Staking management
-- Real-time updates via GraphQL
+- Wallet Connection: Integrated using ConnectKit.
+- NFT Minting Interface: Allows the contract owner to mint NFTs.
+- NFT Transfer: After minted by the owner, the NFT can be transfered for any other account.
+- Staking Management: Stake and unstake NFTs directly from the UI.
+- Real-Time Updates: Powered by GraphQL for live data fetching.
+- NFT Filtering: Search NFTs by token ID or status (staked/unstaked).
+- User Attestation Display: Shows Pro status based on EAS attestation.
 
 See [apps/web/README.md](apps/web/README.md) for frontend-specific documentation.
 
@@ -103,51 +103,17 @@ See [apps/web/README.md](apps/web/README.md) for frontend-specific documentation
 
 The Ponder indexer:
 
-- Indexes NFT transfers and staking events
-- Provides GraphQL API for querying NFT states
-- Supports filtering and pagination
+- Indexes NFT transfers and staking events.
+- Provides GraphQL API for querying NFT states.
+- Integration with EAS to attest pro users.
 
 See [apps/indexer/README.md](apps/indexer/README.md) for indexer-specific documentation.
-
-## GraphQL API
-
-Query examples:
-
-```graphql
-# Get all staked NFTs
-query GetStakedNFTs {
-  nfts(where: { staked: true }) {
-    id
-    owner
-    stakedAt
-  }
-}
-
-# Get recent staking events
-query GetStakingEvents {
-  stakingEvents(orderBy: timestamp, orderDirection: desc, first: 10) {
-    id
-    tokenId
-    eventType
-    timestamp
-  }
-}
-```
 
 ## Testing & Linting
 
 ```bash
 # Run all tests
 pnpm test
-
-# Run linting
-pnpm lint
-
-# Fix linting issues
-pnpm lint:fix
-
-# Type checking
-pnpm typecheck
 ```
 
 ## Build

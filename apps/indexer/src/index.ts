@@ -4,7 +4,7 @@ import { createAttestation } from "./eas/attestations/createAttestation";
 import { EAS } from "@ethereum-attestation-service/eas-sdk";
 import { ethers } from "ethers";
 
-const easContractAddress = "0xC2679fBD37d54388Ce493F1DB75320D236e1815e";
+const easContractAddress = process.env.EAS_CONTRACT_ADDRESS || "";
 const eas = new EAS(easContractAddress);
 
 // Initialize provider and signer
