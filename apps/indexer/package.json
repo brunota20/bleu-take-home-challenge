@@ -1,6 +1,7 @@
 {
   "name": "@bleu-builders/tech-challenge-indexer",
   "private": true,
+  "type": "module",
   "scripts": {
     "dev": "ponder dev",
     "start": "ponder start",
@@ -10,13 +11,15 @@
     "clean": "rm -rf .ponder node_modules"
   },
   "dependencies": {
+    "@ethereum-attestation-service/eas-sdk": "^2.7.0",
+    "dotenv": "^16.4.7",
     "hono": "^4.5.0",
     "ponder": "^0.9.5",
     "viem": "^2.21.3"
   },
   "devDependencies": {
-    "@types/node": "^22.13.1",
     "@biomejs/biome": "1.9.4",
+    "@types/node": "^22.13.1",
     "typescript": "^5.7.3"
   }
 }

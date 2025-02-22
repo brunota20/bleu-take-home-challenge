@@ -1,5 +1,16 @@
 import { ponder } from "ponder:registry";
 import { transferEvent, stakingEvent, nft, userStakedCount } from "ponder:schema";
+import { createAttestation } from "./eas/attestations/createAttestation";
+import { EAS } from "@ethereum-attestation-service/eas-sdk";
+import { ethers } from "ethers";
+
+const easContractAddress = "0xC2679fBD37d54388Ce493F1DB75320D236e1815e";
+const eas = new EAS(easContractAddress);
+
+// Initialize provider and signer
+const provider = new ethers.JsonRpcProvider(process.env.ETH_RPC_URL);
+const signer = new ethers.Wallet(process.env.PRIVATE_KEY || "", provider);
+eas.connect(signer);
 
 ponder.on("BleuNFT:Transfer", async ({ event, context }) => {
   const { db } = context;
@@ -84,17 +95,18 @@ ponder.on("BleuNFT:Staked", async ({ event, context }) => {
     .onConflictDoUpdate((row) => ({ staked: true }));
 
   const userRecord = await db.find(userStakedCount, { id: owner });
+  const newStakedCount = (userRecord?.stakedCount || 0) + 1;
+  const isPro = newStakedCount >= 5;
+  let attestationUID = userRecord?.attestationUID;
 
-  if (!userRecord) {
-    await db.insert(userStakedCount).values({ id: owner, stakedCount: 1, isPro: false });
-  } else {
-    await db.update(userStakedCount, { id: owner }).set((row) => ({
-      stakedCount: row.stakedCount + 1,
-      isPro: row.stakedCount + 1 >= 5,
-    }));
+  if (isPro && !attestationUID) {
+    attestationUID = await createAttestation(owner, `pro-user-${owner}`, newStakedCount, isPro);
   }
-});
 
+  await db.insert(userStakedCount)
+    .values({ id: owner, stakedCount: newStakedCount, isPro, attestationUID })
+    .onConflictDoUpdate((row) => ({ stakedCount: newStakedCount, isPro, attestationUID }));
+});
 
 ponder.on("BleuNFT:Unstaked", async ({ event, context }) => {
   const { db } = context;
@@ -115,12 +127,29 @@ ponder.on("BleuNFT:Unstaked", async ({ event, context }) => {
     .onConflictDoUpdate((row) => ({ staked: false }));
 
   const userRecord = await db.find(userStakedCount, { id: owner });
-  
-  // Update user staking count
   if (userRecord) {
-    await db.update(userStakedCount, { id: owner }).set((row) => ({
-      stakedCount: Math.max(0, row.stakedCount - 1),
-      isPro: row.stakedCount - 1 >= 5,
-    }));
+    const newStakedCount = Math.max(0, userRecord.stakedCount - 1);
+    const isPro = newStakedCount >= 5;
+    let attestationUID = userRecord.attestationUID;
+
+    // Revoke attestation if user falls below Pro threshold
+    if (!isPro && attestationUID) {
+      try {
+        const revokeTx = await eas.revoke({
+          schema: "0xf6c07878be56af4169772818e1fb73d5c13c7afa436549c6d4e199bc560732e0",
+          data: { uid: attestationUID },
+        });
+        await revokeTx.wait();
+        attestationUID = null;
+      } catch (error) {
+        console.error(`Error revoking attestation for user ${owner}:`, error);
+      }
+    }
+
+    await db.update(userStakedCount, { id: owner }).set({
+      stakedCount: newStakedCount,
+      isPro,
+      attestationUID,
+    });
   }
 });

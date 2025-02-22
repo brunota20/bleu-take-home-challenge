@@ -11,17 +11,6 @@ export const abi = [
   },
   {
     type: "function",
-    name: "transferFrom",
-    stateMutability: "nonpayable",
-    inputs: [
-      { name: "from", type: "address" },
-      { name: "to", type: "address" },
-      { name: "tokenId", type: "uint256" }
-    ],
-    outputs: []
-  },
-  {
-    type: "function",
     name: "safeTransferFrom",
     inputs: [
       { name: "from", type: "address", internalType: "address" },
@@ -30,6 +19,13 @@ export const abi = [
     ],
     outputs: [],
     stateMutability: "nonpayable",
+  },
+  {
+      type: "function",
+      name: "owner",
+      inputs: [],
+      outputs: [{ "name": "", "type": "address", "internalType": "address" }],
+      stateMutability: "view"
   },
   {
     type: "function",

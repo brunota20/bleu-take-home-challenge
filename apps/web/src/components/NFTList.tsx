@@ -23,12 +23,14 @@ export default function NFTList() {
   const [nfts, setNFTs] = useState<NFT[]>([]);
   const [totalStakedCount, setTotalStakedCount] = useState<number>(0);
   const [stakedCount, setStakedCount] = useState<number>(0);
+  const [attestationId, setAttestationId] = useState<string>("");
   const [isPro, setIsPro] = useState<boolean>(false);
 
   useEffect(() => {
     if (data) {
       setNFTs(data?.nfts?.items || []);
       setStakedCount(data?.userStakedCount?.stakedCount || 0);
+      setAttestationId(data?.userStakedCount?.attestationUID || "");
       setTotalStakedCount(data?.globalStaked?.totalCount || 0);
       setIsPro(data?.userStakedCount?.isPro || false);
     }
@@ -52,6 +54,7 @@ export default function NFTList() {
       <StakedSummary totalStakedByOwner={stakedCount} totalStakedGlobally={totalStakedCount} />
       <NFTHeader
         isPro={isPro}
+        attestationId={attestationId}
         searchTerm={searchTerm}
         setSearchTerm={setSearchTerm}
         filterStaked={filterStaked}

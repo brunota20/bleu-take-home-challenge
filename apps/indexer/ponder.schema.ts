@@ -52,6 +52,7 @@ export const userStakedCount = onchainTable(
     id: t.text().primaryKey(),
     stakedCount: t.integer().notNull().default(0),
     isPro: t.boolean().default(false),
+    attestationUID: t.text(),
   }),
   (table) => ({
     userIdx: index().on(table.id),
