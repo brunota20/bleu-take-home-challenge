@@ -127,6 +127,8 @@ export default function MintStakeControls() {
       handleTransactionError(error);
     } finally {
       setIsLoading(false);
+      setIsWaiting(false);
+      setIsError(false);
     }
   }
 

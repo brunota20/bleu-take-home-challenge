@@ -35,12 +35,12 @@ export default function NFTCard({ nft, onTransferSuccess }: NFTCardProps) {
           <span className="text-error">Unstaked ❌</span>
         )}
       </p>
-      <Button
+      {!nft.staked && <Button
         onClick={() => setIsModalOpen(true)}
         className="mt-4 px-4 py-2 rounded-lg bg-primary text-primary-foreground hover:opacity-90 transition"
       >
         Transfer
-      </Button>
+      </Button>}
       {isModalOpen && (
         <TransferModal nft={nft} onClose={() => setIsModalOpen(false)} onTransferSuccess={handleTransferSuccess} />
       )}

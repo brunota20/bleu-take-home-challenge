@@ -37,6 +37,8 @@ export default function TransferModal({ nft, onClose, onTransferSuccess }: Trans
     args: [BigInt(nft.tokenId)],
   });
 
+  console.log(owner)
+
   const { data: receipt, isLoading: isWaiting } = useWaitForTransactionReceipt({
     hash: txHash,
   });
