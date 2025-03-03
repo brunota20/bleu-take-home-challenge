@@ -1,4 +1,4 @@
-import MintEvents from "@/components/mint-events";
+import MintEvents from "@/components/mint-events/mint-events";
 
 
 export default function MintEventsShowcase() {

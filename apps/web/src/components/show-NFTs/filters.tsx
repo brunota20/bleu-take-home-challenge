@@ -1,6 +1,6 @@
 'use client';
 
-import { Input } from "./ui/text-input";
+import { Input } from "../ui/text-input";
 
 interface FiltersProps {
   searchTerm: string;

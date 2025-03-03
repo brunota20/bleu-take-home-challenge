@@ -1,8 +1,8 @@
 'use client';
 
 import { useQuery } from '@apollo/client';
-import EventTable from './event-table';
-import EventTableSkeleton from './skeleton/events-table-skeleton';
+import EventTable from '../event-table';
+import EventTableSkeleton from '../skeleton/events-table-skeleton';
 import { GET_MINT_EVENTS } from '@/app/queries/get-mint-events';
 
 export default function MintEvents() {

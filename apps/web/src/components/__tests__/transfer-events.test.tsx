@@ -2,7 +2,7 @@ import { render, screen } from '@testing-library/react';
 import { MockedProvider } from '@apollo/client/testing';
 import { GET_TRANSFER_EVENTS } from '@/app/queries/get-transfer-events';
 import '@testing-library/jest-dom';
-import TransferEvents from '../transfer-events';
+import TransferEvents from '../transfer-events/transfer-events';
 
 const mockData = {
   transferEvents: {

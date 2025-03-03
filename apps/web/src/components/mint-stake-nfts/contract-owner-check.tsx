@@ -1,4 +1,4 @@
-import CopyButton from './copy-button';
+import CopyButton from '../copy-button';
 
 interface ContractOwnerCheckProps {
     contractOwner: string;

@@ -1,8 +1,8 @@
 'use client';
 
 import { useState } from 'react';
-import TransferModal from './TransferModal';
-import { Button } from './ui/button';
+import { Button } from '../ui/button';
+import TransferModal from './transfer-modal';
 
 interface NFT {
   owner: string;

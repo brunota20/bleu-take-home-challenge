@@ -2,7 +2,7 @@ import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { useWriteContract, useAccount, useWaitForTransactionReceipt, useReadContract } from 'wagmi';
 import { toast } from 'react-toastify';
 import '@testing-library/jest-dom';
-import MintStakeControls from '../mint-stake-controls';
+import MintStakeControls from '../mint-stake-nfts/mint-stake-controls';
 
 jest.mock('wagmi', () => ({
   useAccount: jest.fn(),

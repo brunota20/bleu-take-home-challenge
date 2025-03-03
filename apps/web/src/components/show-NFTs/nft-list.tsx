@@ -1,40 +1,18 @@
 'use client';
 
-import { useAccount } from 'wagmi';
-import { useQuery } from '@apollo/client';
-import { useState, useEffect } from 'react';
-import { NFT } from '@/app/utils/types';
-import WalletNotConnected from './wallet-not-connected';
-import LoadingSkeleton from './skeleton/loading-nfts';
+import { useState } from 'react';
+import NFTHeader from './nft-header';
+import { useNFTs } from '@/hooks/useNFTs';
+import WalletNotConnected from '../wallet-not-connected';
+import LoadingSkeleton from '../skeleton/loading-nfts';
 import StakedSummary from './staked-summary';
-import NFTHeader from './NFTHeader';
-import NFTDisplay from './NFT-display';
-import { GET_NFTS } from '@/app/queries/get-nfts';
+import NFTDisplay from './nft-display';
 
 export default function NFTList() {
-  const { address } = useAccount();
-  const { data, loading, error, refetch } = useQuery(GET_NFTS, {
-    variables: { owner: address },
-    fetchPolicy: 'no-cache',
-  });
+  const { address, nfts, stakedCount, totalStakedCount, attestationId, isPro, loading, error, refetch } = useNFTs();
 
   const [searchTerm, setSearchTerm] = useState('');
   const [filterStaked, setFilterStaked] = useState<'all' | 'staked' | 'unstaked'>('all');
-  const [nfts, setNFTs] = useState<NFT[]>([]);
-  const [totalStakedCount, setTotalStakedCount] = useState<number>(0);
-  const [stakedCount, setStakedCount] = useState<number>(0);
-  const [attestationId, setAttestationId] = useState<string>("");
-  const [isPro, setIsPro] = useState<boolean>(false);
-
-  useEffect(() => {
-    if (data) {
-      setNFTs(data?.nfts?.items || []);
-      setStakedCount(data?.userStakedCount?.stakedCount || 0);
-      setAttestationId(data?.userStakedCount?.attestationUID || "");
-      setTotalStakedCount(data?.globalStaked?.totalCount || 0);
-      setIsPro(data?.userStakedCount?.isPro || false);
-    }
-  }, [data]);
 
   if (!address) return <WalletNotConnected />;
   if (loading) return <LoadingSkeleton />;

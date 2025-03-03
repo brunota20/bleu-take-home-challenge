@@ -2,7 +2,7 @@ import { render, screen } from '@testing-library/react';
 import { MockedProvider } from '@apollo/client/testing';
 import { GET_MINT_EVENTS } from '@/app/queries/get-mint-events';
 import '@testing-library/jest-dom';
-import MintEvents from '../mint-events';
+import MintEvents from '../mint-events/mint-events';
 
 const mockData = {
   transferEvents: {

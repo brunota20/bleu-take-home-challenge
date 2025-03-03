@@ -1,15 +1,15 @@
 import { render, screen, fireEvent } from '@testing-library/react';
 import '@testing-library/jest-dom';
-import NFTList from '../NFTList';
-import StakedSummary from '../staked-summary';
-import NFTHeader from '../NFTHeader';
-import ProBadge from '../pro-badge';
-import Filters from '../filters';
-import NFTDisplay from '../NFT-display';
-import NFTGrid from '../NFT-grid';
+import StakedSummary from '../show-NFTs/staked-summary';
+import Filters from '../show-NFTs/filters';
 import { MockedProvider } from '@apollo/client/testing';
 import { GET_NFTS } from '@/app/queries/get-nfts';
 import { NFT } from '@/app/utils/types';
+import NFTList from '../show-NFTs/nft-list';
+import NFTHeader from '../show-NFTs/nft-header';
+import ProBadge from '../show-NFTs/pro-badge';
+import NFTDisplay from '../show-NFTs/nft-display';
+import NFTGrid from '../show-NFTs/nft-grid';
 
 jest.mock('wagmi', () => ({
   useAccount: jest.fn(() => ({ address: '0x123' })),
@@ -59,6 +59,7 @@ describe('NFT Components Tests', () => {
       <NFTHeader
         isPro={true}
         searchTerm=""
+        attestationId=""
         setSearchTerm={jest.fn()}
         filterStaked="all"
         setFilterStaked={jest.fn()}
@@ -68,10 +69,10 @@ describe('NFT Components Tests', () => {
   });
 
   test('renders ProBadge only when isPro is true', () => {
-    const { rerender } = render(<ProBadge isPro={true} />);
+    const { rerender } = render(<ProBadge isPro={true} attestationId=""/>);
     expect(screen.getByAltText('Pro Stamp')).toBeInTheDocument();
 
-    rerender(<ProBadge isPro={false} />);
+    rerender(<ProBadge isPro={false} attestationId=""/>);
     expect(screen.queryByAltText('Pro Stamp')).toBeNull();
   });
 

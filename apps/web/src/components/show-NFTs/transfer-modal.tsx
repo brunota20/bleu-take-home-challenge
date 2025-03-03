@@ -8,9 +8,9 @@ import 'react-toastify/dist/ReactToastify.css';
 import { useEffect, useState } from 'react';
 import { Loader2 } from 'lucide-react';
 import { abi } from '@/app/utils/abis/BleuNFTABI';
-import TransactionHash from './transaction-hash';
-import { Input } from './ui/text-input';
-import { handleTransactionError } from '../app/utils/handle-transaction-error';
+import TransactionHash from '../transaction-hash';
+import { Input } from '../ui/text-input';
+import { handleTransactionError } from '../../app/utils/handle-transaction-error';
 import { contractAddress } from '@/app/utils/contractAddress';
 
 interface NFT {

@@ -1,5 +1,5 @@
-import NFTGrid from './NFT-grid';
 import { NFT } from '@/app/utils/types';
+import NFTGrid from './nft-grid';
 
 interface NFTDisplayProps {
   filteredNFTs: NFT[];

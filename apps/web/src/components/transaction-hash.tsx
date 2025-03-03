@@ -1,6 +1,3 @@
-import { Copy } from "lucide-react";
-import { Button } from "./ui/button";
-import { toast } from "react-toastify";
 import CopyButton from "./copy-button";
 
 interface TransactionHashProps {

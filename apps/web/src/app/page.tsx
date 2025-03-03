@@ -1,4 +1,4 @@
-import MintStakeControls from "@/components/mint-stake-controls";
+import MintStakeControls from "@/components/mint-stake-nfts/mint-stake-controls";
 
 export default function Controls() {
   return (

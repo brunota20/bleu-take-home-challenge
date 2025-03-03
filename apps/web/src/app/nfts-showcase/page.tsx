@@ -1,4 +1,4 @@
-import NFTList from "@/components/NFTList";
+import NFTList from "@/components/show-NFTs/nft-list";
 
 
 export default function NFTs() {

@@ -1,7 +1,7 @@
 'use client';
 
 import { NFT } from '@/app/utils/types';
-import NFTCard from './NFTCard';
+import NFTCard from './nft-card';
 
 
 interface NFTGridProps {

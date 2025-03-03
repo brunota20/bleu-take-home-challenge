@@ -1,4 +1,4 @@
-import TransferEvents from "@/components/transfer-events";
+import TransferEvents from "@/components/transfer-events/transfer-events";
 
 
 export default function TransferEventsShowcase() {
