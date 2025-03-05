@@ -12,6 +12,7 @@ import TransactionHash from '../transaction-hash';
 import { Input } from '../ui/text-input';
 import { handleTransactionError } from '../../app/utils/handle-transaction-error';
 import { contractAddress } from '@/app/utils/contractAddress';
+import Link from 'next/link';
 
 interface NFT {
   tokenId: string;
@@ -49,14 +50,14 @@ export default function TransferModal({ nft, onClose, onTransferSuccess }: Trans
         ({ closeToast }) => (
           <div>
             NFT transferred successfully!{' '}
-            <a 
+            <Link 
               href={`https://sepolia.etherscan.io/tx/${receipt.transactionHash}`} 
               target="_blank" 
               rel="noopener noreferrer"
               className="underline text-blue-500 hover:text-blue-700"
             >
               View on Etherscan
-            </a>
+            </Link>
           </div>
         )
       );

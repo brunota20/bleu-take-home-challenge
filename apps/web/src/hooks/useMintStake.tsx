@@ -5,6 +5,7 @@ import { toast } from "react-toastify";
 import { setGlobalProcessing } from "@/hooks/useMintStakeStatus";
 import { handleTransactionError } from "../app/utils/handle-transaction-error";
 import { contractAddress } from "@/app/utils/contractAddress";
+import Link from "next/link";
 
 export type FormAction = "mint" | "stake" | "unstake";
 
@@ -37,14 +38,14 @@ export function useMintStake() {
       toast.success(
         <div>
           Transaction confirmed!{" "}
-          <a
+          <Link
             href={`https://sepolia.etherscan.io/tx/${receipt.transactionHash}`}
             target="_blank"
             rel="noopener noreferrer"
             className="underline text-blue-500 hover:text-blue-700"
           >
             View on Etherscan
-          </a>
+          </Link>
         </div>
       );
 
