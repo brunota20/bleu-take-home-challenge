@@ -1,6 +1,7 @@
 import Image from 'next/image';
 import ProStamp from '@/public/pro.png';
 import { truncateAddress } from '@/app/utils/functions';
+import Link from 'next/link';
 
 interface ProBadgeProps {
   isPro: boolean;
@@ -22,14 +23,14 @@ export default function ProBadge({ isPro, attestationId }: ProBadgeProps) {
       <p className="mt-2 text-sm text-gray-500">
         Attested by <strong>EAS</strong> (ID: {truncateAddress(attestationId)})
       </p>
-      <a
+      <Link
         href={`https://sepolia.easscan.org/attestation/view/${attestationId}`}
         target="_blank"
         rel="noopener noreferrer"
         className="mt-1 text-blue-500 hover:underline text-sm"
       >
         View on EAS
-      </a>
+      </Link>
     </div>
   );
 }
